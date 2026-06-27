@@ -9,19 +9,29 @@ document.addEventListener("DOMContentLoaded", () => {
       return '<p class="participants-empty">No one is signed up yet.</p>';
     }
 
+    const escapeHtml = (value) =>
+      String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      }[char]));
+    const safeActivityName = escapeHtml(activityName);
     const encodedActivity = encodeURIComponent(activityName);
     const items = participants
       .map((email) => {
         const encodedEmail = encodeURIComponent(email);
+        const safeEmail = escapeHtml(email);
         return `
           <li class="participant-item">
-            <span class="participant-email">${email}</span>
+            <span class="participant-email">${safeEmail}</span>
             <button
               type="button"
               class="participant-remove"
               data-activity="${encodedActivity}"
               data-email="${encodedEmail}"
-              aria-label="Remove ${email} from ${activityName}"
+              aria-label="Remove ${safeEmail} from ${safeActivityName}"
               title="Remove participant"
             >&#128465;</button>
           </li>
